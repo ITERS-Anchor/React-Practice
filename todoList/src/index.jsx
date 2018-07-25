@@ -28,13 +28,24 @@ class TodoList extends React.Component {
           completed: false,
         },
       ],
+      filter: 'all',
     };
     this.AddItemHandler = this.AddItemHandler.bind(this);
     this.InputOnchangeHandler = this.InputOnchangeHandler.bind(this);
     this.ToggleItemHandler = this.ToggleItemHandler.bind(this);
     this.RemoveItemHandler = this.RemoveItemHandler.bind(this);
+    this.handleFilterChange = this.handleFilterChange.bind(this);
   }
-
+  getDisplayItems() {
+    const { filter } = this.state;
+    if (filter === 'completed') {
+      return this.state.items.filter(x => x.completed);
+    }
+    if (filter === 'pending') {
+      return this.state.items.filter(x => !x.completed);
+    }
+    return this.state.items;
+  }
   InputOnchangeHandler(e) {
     this.setState({
       userinput: e.target.value,
@@ -71,6 +82,12 @@ class TodoList extends React.Component {
     const newItems = this.state.items.filter(itm => itm.title !== item.title);
     this.setState({ items: newItems });
   }
+  handleFilterChange(e) {
+    this.setState({ filter: e.target.value });
+  }
+  renderItems() {
+    return this.getDisplayItems().map(item => <TodoItems itm={item} onToggleHandler={() => this.ToggleItemHandler(item)} onRemoveHandler={() => this.RemoveItemHandler(item)} />);
+  }
   render() {
     return (
       <div>
@@ -83,8 +100,37 @@ class TodoList extends React.Component {
           />
           <button type="submit" onClick={this.AddItemHandler}>Add Item</button>
         </form>
+        <div className="todo-filter">
+          <label className="radio-inline">
+            <input
+              type="radio"
+              name="filter"
+              value="all"
+              onChange={this.handleFilterChange}
+              checked={this.state.filter === 'all'}
+            /> All
+          </label>
+          <label className="radio-inline">
+            <input
+              type="radio"
+              name="filter"
+              value="pending"
+              onChange={this.handleFilterChange}
+              checked={this.state.filter === 'pending'}
+            /> Pending
+          </label>
+          <label className="radio-inline">
+            <input
+              type="radio"
+              name="filter"
+              value="completed"
+              onChange={this.handleFilterChange}
+              checked={this.state.filter === 'completed'}
+            /> Completed
+          </label>
+        </div>
         <ul>
-          {this.state.items.map(item => <TodoItems itm={item} onToggleHandler={() => this.ToggleItemHandler(item)} onRemoveHandler={() => this.RemoveItemHandler(item)} />)}
+          {this.renderItems()}
         </ul>
       </div>
     );
