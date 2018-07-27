@@ -8,7 +8,9 @@ export default class ParisWeather extends React.Component{
             isLoading:false,
         };
     }
-    
+    componentDidMount() {
+        this.fetchData();
+      }
     fetchData() {
         const apiUrl = 'https://api.apixu.com/v1/current.json?key=1eb8b1de06614af3a3423418171609&q=Paris';
         this.setState({ isLoading: true, data: null });
