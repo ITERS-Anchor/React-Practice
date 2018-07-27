@@ -22,9 +22,14 @@ export default class CDNJS extends React.Component {
     });
   }
   InputOnchangeHandler(e) {
+    if (this.SearchTimer) {
+      clearTimeout(this.SearchTimer);
+    }
     this.setState({
       userinput: e.target.value.trim(),
-    }, () => { this.fetchData(); });
+    }, () => {
+      this.SearchTimer = setTimeout(() => { this.fetchData(); }, 800);
+    });
   }
   SearchHandler(e) {
     e.preventDefault();
@@ -68,7 +73,6 @@ export default class CDNJS extends React.Component {
         }
         {!this.state.isLoading && this.state.data && this.renderData()}
       </div>
-
     );
   }
 }
