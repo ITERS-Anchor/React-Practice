@@ -5,7 +5,7 @@ export default class CDNJS extends React.Component {
     super();
     this.state = {
       userinput: 'jquery',
-      data: null,
+      data: {},
       isLoading: false,
     };
     this.SearchHandler = this.SearchHandler.bind(this);
@@ -15,15 +15,16 @@ export default class CDNJS extends React.Component {
     this.fetchData();
   }
   fetchData() {
+    this.setState({ isLoading: true });
     const url = `https://api.cdnjs.com/libraries/${this.state.userinput}`;
     $.getJSON(url, (response) => {
-      this.setState({ data: response });
+      this.setState({ data: response, isLoading: false });
     });
   }
   InputOnchangeHandler(e) {
     this.setState({
-      userinput: e.target.value,
-    });
+      userinput: e.target.value.trim(),
+    }, () => { this.fetchData(); });
   }
   SearchHandler(e) {
     e.preventDefault();
@@ -33,16 +34,16 @@ export default class CDNJS extends React.Component {
     });
   }
   renderData() {
-    const { data } = this.state;
+    const { name, filename, version, license, assets = [] } = this.state.data;
     return (
       <div>
-        <label>Name:</label> {data.name} <br />
-        <label>File name:</label> {data.filename} <br />
-        <label>Version:</label> {data.version} <br />
-        <label>License:</label> {data.license} <br />
+        <label>Name:</label> {name} <br />
+        <label>File name:</label> {filename} <br />
+        <label>Version:</label> {version} <br />
+        <label>License:</label> {license} <br />
         <label>All versions</label>
         <div>
-          {data.assets.map(x => (<div>{x.version}</div>))}
+          {assets.map(x => (<div>{x.version}</div>))}
         </div>
       </div>
 
@@ -60,7 +61,12 @@ export default class CDNJS extends React.Component {
           <button type="submit" onClick={this.SearchHandler}>Search</button>
         </form>
         <h3>CDNJS api Versions</h3>
-        {this.state.data && this.renderData()}
+        {this.state.isLoading &&
+        <div className="" style={{ margin: '15px auto' }}>
+          <h3>Loading...</h3>
+        </div>
+        }
+        {!this.state.isLoading && this.state.data && this.renderData()}
       </div>
 
     );
