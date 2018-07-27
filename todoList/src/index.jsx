@@ -1,5 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+// import { Textbox } from 'react-inputs-validation';
 import './styles/app.css';
 
 function TodoItems(props) {
@@ -54,16 +55,19 @@ class TodoList extends React.Component {
 
   AddItemHandler(e) {
     e.preventDefault();// Prevent the default action
-    const newItems = this.state.items.concat([
-      {
-        title: this.state.userinput,
-        completed: false,
-      },
-    ]);
-    this.setState({
-      items: newItems,
-      userinput: '',
-    });
+    const input = this.state.userinput;
+    if (input) {
+      const newItems = this.state.items.concat([
+        {
+          title: input,
+          completed: false,
+        },
+      ]);
+      this.setState({
+        items: newItems,
+        userinput: '',
+      });
+    }
   }
   ToggleItemHandler(item) {
     // console.log(item);
@@ -96,7 +100,7 @@ class TodoList extends React.Component {
             value={this.state.userinput}
             onChange={this.InputOnchangeHandler}
             placeholder="What are you gonna do next"
-            className="form-control"
+            className=""
           />
           <button type="submit" onClick={this.AddItemHandler}>Add Item</button>
         </form>
